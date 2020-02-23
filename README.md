@@ -48,7 +48,7 @@ Here is the structure of the base code:
 
 - The `hw1.sublime-project` file is a "project file" for use by the Sublime Text editor.
 It is included to try to help Sublime understand the organization of the project so that
-it can properly identify errors as you edit your code.
+it can properly identify the errors.
 
 - The `Makefile` is a configuration file for the `make` build utility, which is what
 you should use to compile your code.  In brief, `make` or `make all` will compile
@@ -77,14 +77,8 @@ In the UNIX world stringing together programs with piping and scripting is
 commonplace. Although combining programs in this way is extremely powerful, it
 means that each program must not print extraneous output. For example, you would
 expect `ls` to output a list of files in a directory and nothing else.
-Similarly, your program must follow the specifications for normal operation.
-One part of our grading of this assignment will be to check whether your program
-produces EXACTLY the specified output.  If your program produces output that deviates
-from the specifications, even in a minor way, or if it produces extraneous output
-that was not part of the specifications, it will adversely impact your grade
-in a significant way, so pay close attention.
 
-**Use the debug macro `debug` for any other program output or messages you many need
+**Use the debug macro `debug` for any other program output or messages needed
 while coding (e.g. debugging output).**
 
 # Part 1: Program Operation and Argument Validation
@@ -114,7 +108,7 @@ program via the command line. The program will treat arguments as follows:
 > for all programs and do not need to be reopened.
 
 Some of these operations will also need other command line arguments which are
-described in each part of the assignment.  The usage scenarios for this program are
+described in each part of the project.  The usage scenarios for this program are
 described by the following message, which is printed by the program when it is invoked
 without any arguments:
 
@@ -176,7 +170,7 @@ Some examples of invalid combinations would be:
 > (`string.h`, `ctype.h`, etc). *This is intentional and helped me
 > practice parsing strings and manipulating pointers.*
 
-> :scream: I **DID NOT** use dynamic memory allocation in this assignment
+> :scream: I **DID NOT** use dynamic memory allocation in this project
 > (i.e. `malloc`, `realloc`, `calloc`, `mmap`, etc.).
 
 > :nerd: Reference for command line arguments: [https://beej.us/guide/bgc/html/multi/morestuff.html#clargs](https://beej.us/guide/bgc/html/multi/morestuff.html#clargs).
@@ -188,7 +182,7 @@ All commands from here on are assumed to be run from the `hw1` directory.
 
 In `const.h`, you will find the following function prototype (function
 declaration) already declared for you. I implemented this function
-as part of the assignment.
+as part of the project.
 
 ```c
 int validargs(int argc, char **argv);
@@ -263,9 +257,6 @@ If `validargs` sets the least-significant bit of `global_options` to 1
 (i.e. the `-h` flag was passed), my program calls `USAGE(program_name, return_code)`
 and return `EXIT_SUCCESS`.
 
-> :nerd: The `USAGE(program_name, return_code)` macro is already defined for you
-> in `const.h`.
-
 If validargs returns 0, then the program must read data from `stdin`,
 either compressing it or decompressing it as specified by the values of
 `global_options` and `block_size`, and writing the result to `stdout`.
@@ -295,7 +286,7 @@ In this case `validargs` returns -1, leaving `global_options` unset.
 # Part 2: Grammar-Based Data Compression
 
 This section gives some basic information on context-free grammars (CFGs) and how they
-can be used as a compressed representation for strings.  Normally, you would study
+can be used as a compressed representation for strings.  Normally, one would study
 CFGs in a Theory of Computation or Compilers course, but don't worry, we are not
 interested here in CFGs in their full glory and it should not be difficult to
 understand the way we are making use of them.
@@ -378,7 +369,7 @@ algorithmic problems to consider, one of which is easier than the other:
    that string?
 
 The first problem, which is the easier one, is what I solved in the first
-part of this assignment.  I wrote C code to read in a CFG specified in a
+part of this project.  I wrote C code to read in a CFG specified in a
 convenient format, and then I used the rules to expand the start symbol to
 obtain the string encoded by the CFG.
 
@@ -400,12 +391,12 @@ that consists of set of rules that is smaller than the length of the original st
 For example, Sequitur will discover the CFG given above given the string of 32 `a`s.
 
 We will come back to Sequitur a bit later, but for right now, this is what
-you need to know.  If you want to read more about Sequitur, you can visit
+is needed know.  If you want to read more about Sequitur, you can visit
 [this website](http://www.sequitur.info/).
 
 # Part 3: Serialized Representation of CFGs
 
-For the next part of this assignment, I implemented an application that
+For the next part of this project, I implemented an application that
 can read a CFG and expand it to obtain the string it encodes.  For this, we need
 a definite format for encoding a CFG so that my application can read it.
 To define such a format is the object of this section.
@@ -581,7 +572,7 @@ string that they represent (*i.e.* decompression).  Later, we will consider
 manipulations used to build a set of rules incrementally while reading an
 input string (*i.e.* compression).
 
-For this assignment, we are going to represent everything in terms of linked lists
+For this project, we are going to represent everything in terms of linked lists
 of **symbols**.  Each symbol will be represented by an instance of the following
 C structure, which is defined in `sequitur.h`:
 
@@ -686,7 +677,7 @@ void unref_rule(SYMBOL *rule);
 
 # Part 5: Decompression
 
-For this part of the assignment, the objective is to implement the function
+For this part of the project, the objective is to implement the function
 `decompress()`, which has the following specification and stub in `comdec.c`:
 
 ```c
@@ -719,8 +710,8 @@ For each block, I constructed a linked-list representation of each
 of the rules in the block, and I linked all these rules in a block into
 a single list, pointed at by the `main_rule` global variable.
 I used the `new_symbol` function that I implemented as part of the previous
-section to obtain fresh instances of the `SYMBOL` structure as you require them.
-In addition, I used the `new_rule` function you implemented to construct
+section to obtain fresh instances of the `SYMBOL` structure as I require them.
+In addition, I used the `new_rule` function I implemented to construct
 new rules having a specified nonterminal at the head (but with empty bodies),
 and I used the `add_rule` function to link rules into the list of all rules
 headed by the `main_rule` variable.
@@ -756,23 +747,14 @@ $ bin/sequitur -d < COMPRESSED_FILE
 
 > :nerd: The `<` symbol tells the shell to perform **input redirection**;
 > *i.e.* the shell arranges for the contents of `COMPRESSED_FILE` to be made available
-> to `bin/sequitur` on the standard input.  This way, your program can be used
+> to `bin/sequitur` on the standard input.  This way, my program can be used
 > to decompress various files without having to modify it or to handle command-line
 > arguments that specify the names of input files.
 > It is also possible to perform **output redirection** by using `> OUTPUT_FILE`:
 > the file `OUTPUT_FILE` will be created (or truncated if it already existed -- be careful!)
 > and the output produced by the program on `stdout` is sent to that file instead
-> of to the terminal.  This will allow you to save the results of decompression
+> of to the terminal.  This will allow me to save the results of decompression
 > for closer inspection.
-
-You should also check that your program produces the proper **exit status**,
-as specified in `main.c`.  For example:
-
-```
-$ bin/sequitur -d < COMPRESSED_FILE
-$ echo $?
-0
-```
 
 The shell collects the exit status of each command that it runs and makes it available
 through the shell variable `$?`.  The `echo` command above causes the value of that
@@ -781,7 +763,7 @@ to `EXIT_SUCCESS`.
 
 # Part 6: Compression
 
-In this part of the assignment, I implemented the function `compress()`,
+In this part of the project, I implemented the function `compress()`,
 which has the following stub in `comdec.c`:
 
 ```c
@@ -792,7 +774,7 @@ which has the following stub in `comdec.c`:
  * uses the Sequitur algorithm to compress each block of input to a list
  * of rules, and outputs the resulting compressed data transmission to a
  * specified output stream in the format detailed in the header files and
- * assignment handout.  The output stream is flushed once the transmission
+ * project handout.  The output stream is flushed once the transmission
  * is complete.
  *
  * The maximum number of bytes of uncompressed data represented by each
@@ -810,7 +792,7 @@ which has the following stub in `comdec.c`:
 int compress(FILE *in, FILE *out, int bsize) {
 ```
 
-The compression algorithm we will use is called **Sequitur**, and you can read
+The compression algorithm I will use is called **Sequitur**, and you can read
 about it [here](http://www.sequitur.info/).  That website also has reference implementations
 in several languages, which you are welcome to read and even use if you like.
 
@@ -1034,9 +1016,9 @@ A special case of this is where there is no data at all in the input.
 In that case, the compressed output will consist simply of SOT followed immediately
 by EOT, without any intervening blocks.
 
-In order to output the rules within a block you will need to implement functions
+In order to output the rules within a block I implemented functions
 that are capable of emitting UTF-8 encoded Unicode code points.
-These are essentially the inverses of what you had to implement in order to read
+These are essentially the inverses of what I had to implement in order to read
 the rules from a block.
 
 # Part 7: Running the Completed Program
@@ -1087,9 +1069,9 @@ the `od` command, without using any output file:
 $ bin/sequitur -c -b 100 < testfile | od -t x1 | less
 ```
 
-## Testing Your Program
+## Testing The Program
 
-Pipes can be used to test your program by compressing a file and immediately
+Pipes can be used to test the program by compressing a file and immediately
 decompressing it:
 
 ```
@@ -1145,7 +1127,7 @@ often a requested skill by companies hiring graduates.
 This semester, we will be using a C unit testing framework called
 [Criterion](https://github.com/Snaipe/Criterion), which will give you some
 exposure to unit testing. We have provided a basic set of test cases for this
-assignment.
+project.
 
 The provided tests are in the `tests/hw1_tests.c` file. These tests do the
 following:

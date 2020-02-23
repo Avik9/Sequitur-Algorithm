@@ -1,62 +1,16 @@
-# Homework 1 - CSE 320 - Spring 2020
-#### Professor Eugene Stark
-
-### **Due Date: Friday 02/21/2020 @ 11:59pm**
-
-**Read the entire doc before you start**
+# Sequitur Algorithm of Compression and Decompression
+#### Avik Kadakia and Eugene Stark 
 
 ## Introduction
 
-In this assignment, you will write a command line utility to perform
+In this project, I wrote a command line utility to perform
 decompression of data that has been compressed into a set of rules using
-a data compression algorithm called *Sequitur*, and you will also implement
-some data structures to support the core Sequitur algorithm (for which I
-will provide an implementation), so that in the end you will have constructed
-a utility that can perform both compression and decompression.
-The goal of this homework is to familiarize yourself with C programming,
+a data compression algorithm called *Sequitur*, and I will also implement
+some data structures to support the core Sequitur algorithm, so that in 
+the end I will have constructed a utility that can perform both compression and decompression.
+The goal of this homework is to familiarize myself with C programming,
 with a focus on input/output, bitwise manipulations, and the use of pointers.
 
-For all assignments in this course, you **MUST NOT** put any of the functions
-that you write into the `main.c` file.  The file `main.c` **MUST ONLY** contain
-`#include`s, local `#define`s and the `main` function (you may of course modify
-the `main` function body).  The reason for this restriction has to do with our
-use of the Criterion library to test your code.
-Beyond this, you may have as many or as few additional `.c` files in the `src`
-directory as you wish.  Also, you may declare as many or as few headers as you wish.
-Note, however, that header and `.c` files distributed with the assignment base code
-often contain a comment at the beginning which states that they are not to be
-modified.  **PLEASE** take note of these comments and do not modify any such files,
-as they will be replaced by the original versions during grading.
-
-> :scream: Array indexing (**'A[]'**) is not allowed in this assignment. You
-> **MUST USE** pointer arithmetic instead. All necessary arrays are declared in
-> the `const.h` header file. You **MUST USE** these arrays. **DO NOT** create
-> your own arrays. We **WILL** check for this.
-
-> :nerd: Reference for pointers: [https://beej.us/guide/bgc/html/multi/pointers.html](https://beej.us/guide/bgc/html/multi/pointers.html).
-
-# Getting Started
-
-Fetch base code for `hw1` as described in `hw0`. You can find it at this link:
-[https://gitlab02.cs.stonybrook.edu/cse320/hw1](https://gitlab02.cs.stonybrook.edu/cse320/hw1).
-
-Both repos will probably have a file named `.gitlab-ci.yml` with different contents.
-Simply merging these files will cause a merge conflict. To avoid this, we will
-merge the repos using a flag so that the `.gitlab-ci.yml` found in the `hw1`
-repo will replace the `hw0` version.  To merge, use this command:
-
-```
-git merge -m "Merging HW1_CODE" HW1_CODE/master --strategy-option=theirs
-```
-
-> :scream: Based on past experience, many students will either ignore the above command or forget
-> to use it.  The result will be a **merge conflict**, which will be reported by git.
-> Once a merge conflict has been reported, it is essential to correct it before committing
-> (or to abort the merge without committing -- use `git merge --abort` and go back and try again),
-> because git will have inserted markers into the files involved indicating the locations of the
-> conflicts, and if you ignore this and commit anyway, you will end up with corrupted files.
-> You should consider it important to read up at an early stage on merge conflicts with git and
-> how to resolve them properly.
 
 Here is the structure of the base code:
 
@@ -68,13 +22,18 @@ Here is the structure of the base code:
     ├── include
     │   ├── const.h
     │   ├── debug.h
+    │   ├── extras.h
     │   └── sequitur.h
     ├── Makefile
     ├── rsrc
     │   ├── sequitur.c.seq
     │   ├── sheet.txt
-    │   ├── sheet.txt.seq
-    │   ├── twelve_days.txt
+    │   ├── sheet.txt.seq    
+    │   ├── short_UTF8.txt
+    │   ├── test_file.txt
+    │   ├── test-a.txt
+    │   ├── test-b.txt    
+    │   ├── test-c.txt
     │   └── twelve_days.txt.seq
     ├── src
     │   ├── comdec.c
@@ -86,26 +45,6 @@ Here is the structure of the base code:
     └── tests
         └── hw1_tests.c
 </pre>
-
-- The `.gitlab-ci.yml` file is a file that specifies "continuous integration" testing
-to be performed by the GitLab server each time you push a commit.  Usually it will
-be configured to check that your code builds and runs, and that any provided unit tests
-are passed.  You are free to change this file if you like.
-
-> :scream:  The CI testing is for your own information; it does not directly have
-> anything to do with assignment grading or whether your commit has been properly
-> pushed to the server.  If some part of the testing fails, you will see the somewhat
-> misleading message "commit failed" on the GitLab web interface.
-> This does not mean that "your attempt to commit has failed" or that "your commit
-> didn't get pushed to the server"; the very fact that the testing was triggered at
-> all means that you successfully pushed a commit.  Rather, it means that the CI tests
-> performed on a commit that you pushed did not succeed".  The purpose of the tests are
-> to alert you to possible problems with your code; if you see that testing has failed
-> it is worth investigating why that has happened.  However, the tests can sometimes
-> fail for reasons that are not your fault; for example, the entire CI "runner" system
-> may fail if someone submits code that fills up the system disk.  You should definitely
-> try to understand why the tests have failed if they do, but it is not necessary to be
-> overly obsessive about them.
 
 - The `hw1.sublime-project` file is a "project file" for use by the Sublime Text editor.
 It is included to try to help Sublime understand the organization of the project so that
@@ -120,7 +59,7 @@ a previous compilation.  These "targets" can be combined; for example, you would
 
 - The `include` directory contains C header files (with extension `.h`) that are used
 by the code.  Note that often (but not always) these files contain `DO NOT MODIFY`
-instructions at the beginning.  You should observe these notices carefully where
+instructions at the beginning.  One should observe these notices carefully where
 they appear.
 
 - The `src` directory contains C source files (with extension `.c`).
@@ -145,26 +84,25 @@ from the specifications, even in a minor way, or if it produces extraneous outpu
 that was not part of the specifications, it will adversely impact your grade
 in a significant way, so pay close attention.
 
-**Use the debug macro `debug` (described in the 320 reference document in the
-Piazza resources section) for any other program output or messages you many need
+**Use the debug macro `debug` for any other program output or messages you many need
 while coding (e.g. debugging output).**
 
 # Part 1: Program Operation and Argument Validation
 
-In this part, you will write a function to validate the arguments passed to your
-program via the command line. Your program will treat arguments as follows:
+In this part, I wrote a function to validate the arguments passed to the
+program via the command line. The program will treat arguments as follows:
 
-- If no flags are provided, you will display the usage and return with an
+- If no flags are provided, it will display the usage and return with an
 `EXIT_FAILURE` return code
 
-- If the `-h` flag is provided, you will display the usage for the program and
+- If the `-h` flag is provided, it will display the usage for the program and
   exit with an `EXIT_SUCCESS` return code.
 
-- If the `-c` flag is provided, you will perform data compression; reading
+- If the `-c` flag is provided, it will perform data compression; reading
   uncompressed data from `stdin` and writing compressed data to `stdout`,
   exiting with `EXIT_SUCCESS` on success and `EXIT_FAILURE` on any error.
 
-- If the `-d` flag is provided, you will perform decompression; reading
+- If the `-d` flag is provided, it will perform decompression; reading
   compressed data from `stdin` and writing uncompressed data to `stdout`,
   exiting with `EXIT_SUCCESS` on success and `EXIT_FAILURE` on any error.
 
@@ -230,15 +168,15 @@ Some examples of invalid combinations would be:
 - `$ bin/sequitur -d -b 1024`
 - `$ bin/sequitur -c -b 1k`
 
-> :scream: You may use only "raw" `argc` and `argv` for argument parsing and
+> :scream: I will use only "raw" `argc` and `argv` for argument parsing and
 > validation. Using any libraries that parse command line arguments (e.g.
 > `getopt`) is prohibited.
 
-> :scream: Any libraries that help you parse strings are prohibited as well
-> (`string.h`, `ctype.h`, etc). *This is intentional and will help you
+> :scream: Any libraries that help me parse strings are prohibited as well
+> (`string.h`, `ctype.h`, etc). *This is intentional and helped me
 > practice parsing strings and manipulating pointers.*
 
-> :scream: You **MAY NOT** use dynamic memory allocation in this assignment
+> :scream: I **DID NOT** use dynamic memory allocation in this assignment
 > (i.e. `malloc`, `realloc`, `calloc`, `mmap`, etc.).
 
 > :nerd: Reference for command line arguments: [https://beej.us/guide/bgc/html/multi/morestuff.html#clargs](https://beej.us/guide/bgc/html/multi/morestuff.html#clargs).
@@ -249,7 +187,7 @@ All commands from here on are assumed to be run from the `hw1` directory.
 ### **Required** Validate Arguments Function
 
 In `const.h`, you will find the following function prototype (function
-declaration) already declared for you. You **MUST** implement this function
+declaration) already declared for you. I implemented this function
 as part of the assignment.
 
 ```c
@@ -315,23 +253,23 @@ otherwise the 16 most-significant bits of `global_options` are 0x0400
 (representing a block size of 1024KB, which the program uses as a default
 when none is specified).
 
-If `validargs` returns -1 indicating failure, your program must call
-`USAGE(program_name, return_code)` and return `EXIT_FAILURE`.
+If `validargs` returns -1 indicating failure, my program calls
+`USAGE(program_name, return_code)` and returns `EXIT_FAILURE`.
 **Once again, `validargs` must always return, and therefore it must not
 call the `USAGE(program_name, return_code)` macro itself.
 That should be done in `main`.**
 
 If `validargs` sets the least-significant bit of `global_options` to 1
-(i.e. the `-h` flag was passed), your program must call `USAGE(program_name, return_code)`
+(i.e. the `-h` flag was passed), my program calls `USAGE(program_name, return_code)`
 and return `EXIT_SUCCESS`.
 
 > :nerd: The `USAGE(program_name, return_code)` macro is already defined for you
 > in `const.h`.
 
-If validargs returns 0, then your program must read data from `stdin`,
+If validargs returns 0, then the program must read data from `stdin`,
 either compressing it or decompressing it as specified by the values of
 `global_options` and `block_size`, and writing the result to `stdout`.
-Upon successful completion, your program should exit with exit status `EXIT_SUCCESS`;
+Upon successful completion, the program would exit with exit status `EXIT_SUCCESS`;
 otherwise, in case of an error it should exit with exit status `EXIT_FAILURE`.
 
 > :nerd: Remember `EXIT_SUCCESS` and `EXIT_FAILURE` are defined in `<stdlib.h>`.
@@ -439,9 +377,9 @@ algorithmic problems to consider, one of which is easier than the other:
 2. Given a string, how can we find a CFG (hopefully "shorter") that represents
    that string?
 
-The first problem, which is the easier one, is what you will solve in the first
-part of this assignment.  You will write C code to read in a CFG specified in a
-convenient format, and then you will use the rules to expand the start symbol to
+The first problem, which is the easier one, is what I solved in the first
+part of this assignment.  I wrote C code to read in a CFG specified in a
+convenient format, and then I used the rules to expand the start symbol to
 obtain the string encoded by the CFG.
 
 The second problem is harder, at least if we want to take the "shorter" thing
@@ -467,9 +405,9 @@ you need to know.  If you want to read more about Sequitur, you can visit
 
 # Part 3: Serialized Representation of CFGs
 
-For the next part of this assignment, you will implement an application that
+For the next part of this assignment, I implemented an application that
 can read a CFG and expand it to obtain the string it encodes.  For this, we need
-a definite format for encoding a CFG so that your application can read it.
+a definite format for encoding a CFG so that my application can read it.
 To define such a format is the object of this section.
 
 When all is said and done, a CFG is a sequence of **rules**, and each rule is a
@@ -557,13 +495,13 @@ E ==> Da
 
 which is the CFG that we already discussed above.
 
-> :scream:  Students are often confused at this point about the relationship
+> :scream:  People are often confused at this point about the relationship
 > between a sequence of hexadecimal numerals like `c4 82 c4 81 61` and the
 > input data that their program will have to read.  It is important to understand
 > that the input data is simply a sequence of bytes, which will **not** be text,
 > in general.  Each byte is an uninterpreted 8-bit value, which can be read
 > from the input stream using, *e.g.* the function `fgetc()`.  The input bytes
-> are **not** encoded in hexadecimal, and your program will **not** be performing
+> are **not** encoded in hexadecimal, and the program will **not** be performing
 > any interpretation of hexadecimal numerals.  A textual representation such as
 > `c4 82 c4 81 61` is simply a way of representing a sequence of six bytes in a
 > form that a human being can understand.
@@ -598,7 +536,7 @@ Thus, the first line represents the first 16 data bytes (starting at offset `000
 the second line represents the second 16 data bytes (starting at offset `00000020`),
 and so on.
 
-> :nerd: To find out more about `od`, you should read the manual page using
+> :nerd: To find out more about `od`, you can read the manual page using
 > the command `man 1 od`.
 
 ```
@@ -723,7 +661,7 @@ end of a list.  You can read more about this kind of list
 
 ## Implementation
 
-At this point, you should implement the following functions for which stubs and
+At this point, I implemented the following functions for which stubs and
 specifications are given in `symbol.c` and `rules.c`:
 
 **Needed for decompression:**
@@ -746,13 +684,9 @@ SYMBOL *ref_rule(SYMBOL *rule);
 void unref_rule(SYMBOL *rule);
 ```
 
-The implementations of these functions should be straightforward from their specifications,
-given the discussion above and what you should already know about doubly linked lists
-from previous courses.
-
 # Part 5: Decompression
 
-For this part of the assignment, your objective is to implement the function
+For this part of the assignment, the objective is to implement the function
 `decompress()`, which has the following specification and stub in `comdec.c`:
 
 ```c
@@ -773,34 +707,30 @@ int decompress(FILE *in, FILE *out) {
 ```
 
 We have already discussed in the previous section the format of the compressed input stream.
-Your `decompress` function should work by using the C Standard I/O Library function
+My `decompress` function works by using the C Standard I/O Library function
 `fgetc()` to read the input stream byte-by-byte, parse the stream into blocks,
 decode the rules contained in each block, and then expand the rules starting
-with the main rule, outputting the uncompressed original data bytes as you go along.
-You will probably want to implement a helper function that can read a UTF-8 encoded
+with the main rule, outputting the uncompressed original data bytes as I go along.
+I implemented a helper function that can read a UTF-8 encoded
 character from an input stream and identify the special marker bytes (which are
 illegal for UTF-8, but important for parsing the compressed data transmission
 into blocks and rules).
-For each block, you will need to construct a linked-list representation of each
-of the rules in the block, and you will need to link all these rules in a block into
+For each block, I constructed a linked-list representation of each
+of the rules in the block, and I linked all these rules in a block into
 a single list, pointed at by the `main_rule` global variable.
-You should use the `new_symbol` function that you implemented as part of the previous
+I used the `new_symbol` function that I implemented as part of the previous
 section to obtain fresh instances of the `SYMBOL` structure as you require them.
-In addition, you should use the `new_rule` function you implemented to construct
+In addition, I used the `new_rule` function you implemented to construct
 new rules having a specified nonterminal at the head (but with empty bodies),
-and you should use the `add_rule` function to link rules into the list of all rules
+and I used the `add_rule` function to link rules into the list of all rules
 headed by the `main_rule` variable.
-You are on your own as far as adding symbols to the body of a rule is concerned;
-there is no function that has been specified for this.  You might choose to
-add a suitable function or functions to `symbol.c`, or you could just code these
-operations in-line where they are required.
 
 Once a block has been read and the corresponding set of rules constructed and linked
-from the `main_rule` variable, you will need to use the rules to perform expansion,
+from the `main_rule` variable, I used the rules to perform expansion,
 starting from the main rule, and to output the decompressed data bytes to the output stream.
-As the expansion of each block is completed, you will need to reinitialize and go on
+As the expansion of each block is completed, I reinitialized and go on
 to the next block, until finally the EOT marker is read, indicating the end of the
-compressed transmission.  At that point you should call ``fflush()` on the output
+compressed transmission.  At that point I called ``fflush()` on the output
 stream, to ensure that no output remains buffered in memory.
 
 The actual expansion of a set of rules can be carried out recursively as follows.
@@ -808,20 +738,17 @@ Beginning with the main_rule, traverse the body of the rule symbol-by-symbol.
 Each time a terminal symbol is encountered, use `fputc()` to write to the output stream
 a single data byte corresponding to the value of that symbol.
 When a nonterminal symbol is encountered, recurse and expand using the rule having
-that nonterminal symbol at its head.  With this algorithm, you do not need to
+that nonterminal symbol at its head.  With this algorithm, I did not need to
 modify any rules or lists once the set of rules has been constructed -- it is just
-a simple recursive traversal.  There is one issue, and that is you will need to be able
+a simple recursive traversal.  There is one issue, and that is I will need to be able
 to find, given a nonterminal symbol, the rule that has that symbol as its head.
-Although you could find the rule by scanning the list of all rules, it is much more
-efficient to have a map from nonterminal symbols to rules.  For that purpose, you have
-been provided with the `rule_map` global variable.  While reading a block, each time you
+Although I could find the rule by scanning the list of all rules, it is much more
+efficient to have a map from nonterminal symbols to rules.  For that purpose, I have
+been provided with the `rule_map` global variable.  While reading a block, each time I
 construct a rule, put a pointer to the head of the rule in the entry of `rule_map`
 corresponding to the nonterminal at the rule head.
-During expansion, when you encounter a nonterminal, you can then use the rule map
+During expansion, when I encounter a nonterminal, I then used the rule map
 to go directly to the associated rule.
-
-Be sure to modify `main.c` so that you will be able to perform decompression
-by running your program from the command line using the `-d` flag; *viz.*:
 
 ```
 $ bin/sequitur -d < COMPRESSED_FILE
@@ -852,21 +779,9 @@ through the shell variable `$?`.  The `echo` command above causes the value of t
 variable to be printed.  In the above example, the value was 0, which corresponds
 to `EXIT_SUCCESS`.
 
-> :nerd:  Once you have successfully implemented decompression, you will be able
-> to use your decompression program to "unlock" the code for the Sequitur algorithm
-> that I have provided to help you implement the compression portion of the
-> application.  Use your decompression program on the file `rsrc/sequitur.c.seq`
-> in the basecode handout, and replace the stub file `src/sequitur.c` with the
-> decompressed output (assuming of course, that your decompression program worked
-> correctly and actually produced a valid C source file):
->
-> ```
-> $ bin/sequitur -d < rsrc/sequitur.c.seq > src/sequitur.c
-> ```
-
 # Part 6: Compression
 
-In this part of the assignment, you will implement the function `compress()`,
+In this part of the assignment, I implemented the function `compress()`,
 which has the following stub in `comdec.c`:
 
 ```c
@@ -897,19 +812,7 @@ int compress(FILE *in, FILE *out, int bsize) {
 
 The compression algorithm we will use is called **Sequitur**, and you can read
 about it [here](http://www.sequitur.info/).  That website also has reference implementations
-in several languages, which you are welcome to read and even use if you like, though
-I actually don't expect that the code itself will be of much use to you other than possibly
-for understanding purposes.
-
-> :scream: Note that in general you are not welcome to refer to code on websites in order
-> to do the homework assignments, but I am making an exception, in this particular case,
-> for this particular website.
-
-I decided that to ask you to implement the complete Sequitur algorithm yourself was probably
-too difficult, so I have provided code for the core of the algorithm.
-As a result, you don't have to understand it in full detail, but it will be helpful to have
-some idea as to how it works, in order to identify and correct bugs in the supporting code
-that you do have to implement.  So I will briefly discuss the algorithm here.
+in several languages, which you are welcome to read and even use if you like.
 
 The basic idea of Sequitur is to read through a "string" (here by "string" we mean any
 sequence of bytes) in a byte-by-byte fashion, while constructing incrementally a CFG that
@@ -924,7 +827,7 @@ In order to try to achieve efficiency, the CFGs produced by Sequitur satisfy two
    in the grammar).
 
 Sequitur starts out initially with a single main rule having an empty body.
-Each iteration of the "main loop" (you do have to implement this) reads a byte of
+Each iteration of the "main loop" reads a byte of
 data from the input stream, creates a terminal symbol having as its value the value
 of the byte read, and appends this symbol to the end of the main rule by calling
 the function `insert_after()`, the implementation of which is part of the code that I supplied.
@@ -1062,7 +965,7 @@ that I have supplied.
 
 ## Implementation:  Digram Hash Table
 
-At this point, you will need to implement the **digram hash table** (in `digram_hash.c`),
+At this point, I implemented the **digram hash table** (in `digram_hash.c`),
 which is used to keep track of the digrams that exist in the current set of rules.
 The functions to implement are:
 
@@ -1076,45 +979,36 @@ int digram_put(SYMBOL *first);
 Specifications for these functions are given with the stubs in `digram_hash.c`.
 As previously discussed, the basic scheme used for the hash table can be summarized
 as "open addressed hashing using linear probing with an increment of 1".
-What this means is: to look up a digram in the table you first apply the
+What this means is: to look up a digram in the table I first apply the
 `DIGRAM_HASH` function to the values of the two symbols in the digram.
-This gives you an index into the `digram_table` that will be the starting point
-for your search.  Starting from this index, you step from one entry to the next,
-checking the symbol values of each digram you find against the values you are
-looking for.  If you get to the end of the array, you continue at the beginning.
-If you find a matching entry before you hit the first `NULL` entry, your lookup
-was successful.  If you hit `NULL` before finding a match, your lookup failed.
+This gives me an index into the `digram_table` that will be the starting point
+for my search.  Starting from this index, I step from one entry to the next,
+checking the symbol values of each digram I find against the values you are
+looking for.  If I get to the end of the array, I continue at the beginning.
+If I find a matching entry before I hit the first `NULL` entry, my lookup
+was successful.  If I hit `NULL` before finding a match, my lookup failed.
 
-For insertion, you perform a search in the same way as for lookup;
-however this time you are looking to find a `vacant` entry *without* first
-seeing a matching entry.  If you first find a matching entry, then the digram
-already exists in the table and your return value should reflect that.
-If you find a vacant entry first, then a matching digram did not previously
-exist in the table and you install the new entry in the vacant position.
+For insertion, I perform a search in the same way as for lookup;
+however this time I am looking to find a `vacant` entry *without* first
+seeing a matching entry.  If I first find a matching entry, then the digram
+already exists in the table and my return value should reflect that.
+If I find a vacant entry first, then a matching digram did not previously
+exist in the table and I install the new entry in the vacant position.
 
 Deletion in an open-addressed hash table is not quite so straightforward.
-You can't just replace the entry to be deleted by `NULL`, because this `NULL`
+I can't just replace the entry to be deleted by `NULL`, because this `NULL`
 could end up between some other entry in the table and the starting index
 given by the hash function.  In that case, a subsequent lookup of this entry
 will (incorrectly) fail because the `NULL` will be encountered first,
 terminating the search.  A solution to the problem is not to replace a deleted
 entry by `NULL`, but rather by some other value `TOMBSTONE`, which is
-distinguishable from `NULL`.  On lookup, you should treat `TOMBSTONE` values
-as if they are occupied positions, but on insertion, you should treat them
+distinguishable from `NULL`.  On lookup, I should treat `TOMBSTONE` values
+as if they are occupied positions, but on insertion, I should treat them
 as vacant.
-
-I'm not going to include much more on the hash table implementation, because
-everybody is supposed to have taken Data Structures prior to this course and
-even if you don't remember anything about hash tables, you ought to be able
-to review that material without too much difficulty.
-
-> :scream:  You are **strongly cautioned** not to search for C implementations
-> of hash tables or to use in your own implementation any such code you might
-> inadvertently encounter.  You are expected to write this code yourself!
 
 ## Implementation:  Compression
 
-Finally, once the digram hash table is done, you are ready to implement the
+Finally, once the digram hash table is done, I am ready to implement the
 `compress()` function.
 This function will begin by outputting a "start of transmission" (SOT) mark
 to the output stream.
@@ -1134,7 +1028,7 @@ for decompression.
 Each block will start with a "start of block" (SOB) mark and end with an
 "end of block" (EOB) mark, with intervening rules separated by "rule delimiter"
 (RD) marks.  There must be at least one rule in each block, so if EOF is reached
-before any data is read for a block, you will not output any SOB or EOB
+before any data is read for a block, I will not output any SOB or EOB
 but instead will go directly to outputting EOT.
 A special case of this is where there is no data at all in the input.
 In that case, the compressed output will consist simply of SOT followed immediately
@@ -1173,7 +1067,7 @@ $ od -t x1 outfile
 0000135
 ```
 
-If you use the above command with an `outfile` that is much longer, there would
+If I use the above command with an `outfile` that is much longer, there would
 be so much output that the first few lines would be lost off of the top of the screen.
 To avoid this, you can **pipe** the output to a program called `less`:
 
@@ -1265,8 +1159,8 @@ correctly when the `-c` flag is passed in.
 - `validargs_error_test` ensures that `validargs` returns an error when the
 `-b` (blocksize) flag is specified together with the `-d` (decompress) flag.
 
-- `help_system_test` uses the `system` syscall to execute your program through
-Bash and checks to see that your program returns with `EXIT_SUCCESS`.
+- `help_system_test` uses the `system` syscall to execute the program through
+Bash and checks to see that the program returns with `EXIT_SUCCESS`.
 
 ### Compiling and Running Tests
 
@@ -1278,32 +1172,7 @@ more information about each test run, you can use the verbose print option:
 `bin/sequitur_tests --verbose=0`.
 
 The tests we have provided are very minimal and are meant as a starting point
-for you to learn about Criterion, not to fully test your homework. You may write
-your own additional tests in `tests/sequitur_tests.c`. However, this is not required
-for this assignment. Criterion documentation for writing your own tests can be
+for you to learn about Criterion. You can write
+your own additional tests in `tests/sequitur_tests.c`. Criterion documentation for writing your own tests can be
 found [here](http://criterion.readthedocs.io/en/master/).
-
-# Hand-in instructions
-
-**TEST YOUR PROGRAM VIGOROUSLY BEFORE SUBMISSION!**
-
-Make sure that you have implemented all the required functions specifed in `const.h`.
-
-Make sure that you have adhered to the restrictions (no array brackets, no prohibited
-header files, no modifications to files that say "DO NOT MODIFY" at the beginning,
-no functions other than `main()` in `main.c`) set out in this assignment document.
-
-Make sure your directory tree looks basically like it did when you started
-(there could possibly beadditional files that you added, but the original organization
-should be maintained) and that your homework compiles (you should be sure to try compiling
-with both `make clean all` and `make clean debug` because there are certain errors that can
-occur one way but not the other).
-
-This homework's tag is: `hw1`
-
-`$ git submit hw1`
-
-> :nerd: When writing your program try to comment as much as possible. Try to
-> stay consistent with your formatting. It is much easier for your TA and the
-> professor to help you if we can figure out what your code does quickly!
 

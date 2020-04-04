@@ -131,8 +131,6 @@ static void expand_instance(SYMBOL *this) {
     join_symbols(last, right);
     rule->next = rule->prev = NULL;  // Avoid mysterious problems.
 
-<<<<<<< HEAD
-=======
     // The insertion of the sequence forms potentially new digrams at the beginning
     // and the end of the inserted sequence.  It is definitely necessary to insert
     // into the table the digram formed at the end, as examples of this situation
@@ -167,7 +165,6 @@ static void expand_instance(SYMBOL *this) {
 	}
     }
 
->>>>>>> HW1_CODE/master
     // Recycle the nonterminal symbol, which is no longer used.
     recycle_symbol(this);
 
@@ -337,8 +334,4 @@ int check_digram(SYMBOL *this) {
 	process_match(this, match);
 	return 1;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> HW1_CODE/master

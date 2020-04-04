@@ -16,23 +16,7 @@ Test(basecode_tests_suite, validargs_help_test , .timeout=TEST_TIMEOUT) {
     cr_assert_eq(opt & flag, flag, "Correct bit (0x1) not set for -h. Got: %x", opt);
 }
 
-<<<<<<< HEAD
-Test(basecode_tests_suite, validargs_d) {
-    int argc = 2;
-    char *argv[] = {"bin/sequitur", "-d", NULL};
-    int ret = validargs(argc, argv);
-    int exp_ret = 0;
-    int opt = global_options;
-    int flag = 0x4;
-    cr_assert_eq(ret, exp_ret, "Invalid return for valid args.  Got: %d | Expected: %d",
-		 ret, exp_ret);
-    cr_assert_eq(opt & flag, flag, "Correct bit (0x1) not set for -h. Got: %x", opt);
-}
-
-Test(basecode_tests_suite, validargs_compress_test) {
-=======
 Test(basecode_tests_suite, validargs_compress_test , .timeout=TEST_TIMEOUT) {
->>>>>>> HW1_CODE/master
     int argc = 4;
     char *argv[] = {"bin/sequitur", "-c", "-b", "10", NULL};
     int ret = validargs(argc, argv);
@@ -48,29 +32,7 @@ Test(basecode_tests_suite, validargs_compress_test , .timeout=TEST_TIMEOUT) {
 		 exp_size, size);
 }
 
-<<<<<<< HEAD
-Test(basecode_tests_suite, invalidargs_compress_test_low_blockSize) {
-    int argc = 4;
-    char *argv[] = {"bin/sequitur", "-c", "-b", "10000", NULL};
-    int ret = validargs(argc, argv);
-    int exp_ret = -1;
-    cr_assert_eq(ret, exp_ret, "Invalid return for valid args.  Got: %d | Expected: %d",
-		 ret, exp_ret);
-}
-
-Test(basecode_tests_suite, invalidargs_compress_test_high_blockSize) {
-    int argc = 4;
-    char *argv[] = {"bin/sequitur", "-c", "-b", "-10", NULL};
-    int ret = validargs(argc, argv);
-    int exp_ret = -1;
-    cr_assert_eq(ret, exp_ret, "Invalid return for valid args.  Got: %d | Expected: %d",
-		 ret, exp_ret);
-}
-
-Test(basecode_tests_suite, validargs_error_test) {
-=======
 Test(basecode_tests_suite, validargs_error_test, .timeout=TEST_TIMEOUT) {
->>>>>>> HW1_CODE/master
     int argc = 4;
     char *argv[] = {"bin/sequitur", "-d", "-b", "10", NULL};
     int ret = validargs(argc, argv);

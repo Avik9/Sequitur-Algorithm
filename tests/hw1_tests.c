@@ -2,7 +2,9 @@
 #include <criterion/logging.h>
 #include "const.h"
 
-Test(basecode_tests_suite, validargs_help_test) {
+#define TEST_TIMEOUT 10
+
+Test(basecode_tests_suite, validargs_help_test , .timeout=TEST_TIMEOUT) {
     int argc = 2;
     char *argv[] = {"bin/sequitur", "-h", NULL};
     int ret = validargs(argc, argv);
@@ -14,6 +16,7 @@ Test(basecode_tests_suite, validargs_help_test) {
     cr_assert_eq(opt & flag, flag, "Correct bit (0x1) not set for -h. Got: %x", opt);
 }
 
+<<<<<<< HEAD
 Test(basecode_tests_suite, validargs_d) {
     int argc = 2;
     char *argv[] = {"bin/sequitur", "-d", NULL};
@@ -27,6 +30,9 @@ Test(basecode_tests_suite, validargs_d) {
 }
 
 Test(basecode_tests_suite, validargs_compress_test) {
+=======
+Test(basecode_tests_suite, validargs_compress_test , .timeout=TEST_TIMEOUT) {
+>>>>>>> HW1_CODE/master
     int argc = 4;
     char *argv[] = {"bin/sequitur", "-c", "-b", "10", NULL};
     int ret = validargs(argc, argv);
@@ -42,6 +48,7 @@ Test(basecode_tests_suite, validargs_compress_test) {
 		 exp_size, size);
 }
 
+<<<<<<< HEAD
 Test(basecode_tests_suite, invalidargs_compress_test_low_blockSize) {
     int argc = 4;
     char *argv[] = {"bin/sequitur", "-c", "-b", "10000", NULL};
@@ -61,6 +68,9 @@ Test(basecode_tests_suite, invalidargs_compress_test_high_blockSize) {
 }
 
 Test(basecode_tests_suite, validargs_error_test) {
+=======
+Test(basecode_tests_suite, validargs_error_test, .timeout=TEST_TIMEOUT) {
+>>>>>>> HW1_CODE/master
     int argc = 4;
     char *argv[] = {"bin/sequitur", "-d", "-b", "10", NULL};
     int ret = validargs(argc, argv);
@@ -69,8 +79,8 @@ Test(basecode_tests_suite, validargs_error_test) {
 		 ret, exp_ret);
 }
 
-Test(basecode_tests_suite, help_system_test) {
-    char *cmd = "bin/sequitur -h";
+Test(basecode_tests_suite, help_system_test, .timeout=TEST_TIMEOUT) {
+    char *cmd = "timeout -sKILL 10 bin/sequitur -h";
 
     // system is a syscall defined in stdlib.h
     // it takes a shell command as a string and runs it

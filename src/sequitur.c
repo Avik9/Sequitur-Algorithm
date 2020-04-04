@@ -131,6 +131,43 @@ static void expand_instance(SYMBOL *this) {
     join_symbols(last, right);
     rule->next = rule->prev = NULL;  // Avoid mysterious problems.
 
+<<<<<<< HEAD
+=======
+    // The insertion of the sequence forms potentially new digrams at the beginning
+    // and the end of the inserted sequence.  It is definitely necessary to insert
+    // into the table the digram formed at the end, as examples of this situation
+    // are readily found.  The reference code does this (actually, it is marked as
+    // a bugfix in some of the reference implementations).  It would also seem to
+    // be necessary to insert the digram formed at the beginning, but the reference
+    // code does not do this and I have not observed it to occur.  I do not see any
+    // reason why it would be prohibited from occurring.  I also do not understand
+    // why the insertion of these digrams does not seem ever to produce repeated
+    // digrams, except in the case of triples.
+
+    // This is what the reference code does, but without the defensive checks.
+    if(!IS_RULE_HEAD(last->next)) {
+	if(digram_put(last) == 1) {
+	    if(last->value != last->next->value) {
+		fprintf(stderr, "Already existing digram not part of a triple "
+			"in expand_instance (case 1)\n");
+		abort();
+	    }
+	}
+    }
+
+    // This case never seems to occur, but I do not understand why.
+    if(!IS_RULE_HEAD(first->prev)) {
+	fprintf(stderr, "!!! expand_instance case 2 triggered\n");
+	if(digram_put(first->prev) == 1) {
+	    if(first->prev->value != first->value) {
+		fprintf(stderr, "Already existing digram not part of a triple "
+			"in expand_instance (case 2)\n");
+		abort();
+	    }
+	}
+    }
+
+>>>>>>> HW1_CODE/master
     // Recycle the nonterminal symbol, which is no longer used.
     recycle_symbol(this);
 
@@ -300,4 +337,8 @@ int check_digram(SYMBOL *this) {
 	process_match(this, match);
 	return 1;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> HW1_CODE/master
